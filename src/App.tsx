@@ -122,16 +122,15 @@ function App() {
       const generatePrize = setInterval(() => {
         const r = Math.floor(Math.random() * rows);
         const c = Math.floor(Math.random() * cols);
-        console.log(r, ', ', c);
-        if (grid[r][c] !== 1) {
-          setGrid(prev => {
+        setGrid(prev => {
+          if (prev[r][c] !== 1) {
             const newGrid = prev.map(i => [...i]);
             newGrid[r][c] = 2;
             setPrize(true);
             return newGrid;
-          })
-        }
-        console.table(grid[r][c]);
+          }
+          return prev;
+        })
       }, 1000);
       return () => clearInterval(generatePrize);
     }
