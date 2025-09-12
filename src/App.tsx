@@ -33,7 +33,7 @@ function App() {
       e.key === 'ArrowDown' && head[0] + 1 === rows ||
       e.key === 'ArrowUp' && head[0] - 1 === -1
     ) {
-      reset();
+      fail();
     }
     else {
       if (e.key === 'ArrowRight' && grid[head[0]][head[1] + 1] !== 1) { arrowRef.current = 'right'; }
@@ -55,13 +55,18 @@ function App() {
       return newSnake
     })
   }
-  const reset = () => {
-    setStart(false); setEnd(true);
+  const finish = () => {
+    setStart(false);
     setGrid(startGrid); setSnake(startSnake);
+  }
+  const fail = () => {
+    setEnd(true);
+    finish();
   }
 
   const onStartClick = () => {
-    setStart(!start); setEnd(false);
+    setStart(true); setEnd(false);
+    setGrid(startGrid); setSnake(startSnake); //the line alllows to use it as a restart too
     drawSnake(snake);
     arrowRef.current = 'right';
   }
@@ -75,19 +80,19 @@ function App() {
       const moveSnake = setInterval(() => {
         const head = snake[snake.length - 1];
         if (arrowRef.current === 'right' && head[1] < cols) {
-          if (prevMove === 'right' && head[1] === cols - 1) reset();
+          if (prevMove === 'right' && head[1] === cols - 1) fail();
           else redrawSnake(startGrid, 0, 1);
         }
         if (arrowRef.current === 'left' && head[1] >= -1) {
-          if (prevMove === 'left' && head[1] === 0) reset();
+          if (prevMove === 'left' && head[1] === 0) fail();
           else redrawSnake(startGrid, 0, -1);
         }
         if (arrowRef.current === 'down' && head[0] <= rows) {
-          if (prevMove === 'down' && head[0] === rows - 1) reset();
+          if (prevMove === 'down' && head[0] === rows - 1) fail();
           else redrawSnake(startGrid, 1, 0);
         }
         if (arrowRef.current === 'up' && head[0] >= -1) {
-          if (prevMove === 'up' && head[0] === 0) reset();
+          if (prevMove === 'up' && head[0] === 0) fail();
           else redrawSnake(startGrid, -1, 0);
         }
       }, 200);
@@ -119,7 +124,10 @@ function App() {
         </Box>}
         {end && <Typography variant='h2' color='red'>TRY AGAIN</Typography>}
       </Stack>
-      <Button disabled={start} variant='contained' onClick={onStartClick}>Start</Button>
+      <Stack direction='row' justifyContent='center' spacing={2}>
+        <Button variant='contained' onClick={onStartClick}>{start ? 'Restart' : 'Start'}</Button>
+        <Button disabled={!start} variant='contained' onClick={finish}>Finish</Button>
+      </Stack >
     </>
   )
 }
