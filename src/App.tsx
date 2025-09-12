@@ -56,7 +56,7 @@ function App() {
         if (newGrid[head[0] + r][head[1] + c] === 2) {
           setPrize(false); setScore(score + 1);
         }
-        else newGrid[prev[0][0]][prev[0][1]] = 0;
+        newGrid[prev[0][0]][prev[0][1]] = 0;
         newGrid[head[0] + r][head[1] + c] = 1;
         return newGrid;
       });
