@@ -102,7 +102,10 @@ function App() {
 
   return (
     <>
-      <Stack mb={2} border='2px solid blue' width='604px' height='404px' justifyContent='center'>
+      <Typography variant='h3' color='limegreen'>SnaKe GamE</Typography>
+      <Stack width='600px' alignItems='center'><Box className="wavy-line" /></Stack >
+
+      <Stack marginY={2} border='2px solid blue' width='600px' height='400px' justifyContent='center'>
         {start && <Box
           sx={{
             display: 'grid',
@@ -123,7 +126,7 @@ function App() {
           ))}
         </Box>}
         {end && <Typography variant='h2' color='red'>TRY AGAIN</Typography>}
-      </Stack>
+      </Stack >
       <Stack direction='row' justifyContent='center' spacing={2}>
         <Button variant='contained' onClick={onStartClick}>{start ? 'Restart' : 'Start'}</Button>
         <Button disabled={!start} variant='contained' onClick={finish}>Finish</Button>

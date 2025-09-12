@@ -5,38 +5,10 @@
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+.wavy-line {
+  width: 300px;
+  height: 20px;
+  background-image: url("data:image/svg+xml;utf8,<svg width='100' height='20' xmlns='http://www.w3.org/2000/svg'><path d='M0 10 Q 10 0, 20 10 T 40 10 T 60 10 T 80 10 T 100 10' stroke='limegreen' fill='transparent' stroke-width='2'/></svg>");
+  background-repeat: no-repeat;
+  background-size: 100% 100%; /* ⬅️ This scales the SVG to fit the div */
 }
