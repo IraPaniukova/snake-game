@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import { Box, Button, Stack, Typography } from '@mui/material';
 
@@ -15,32 +15,45 @@ function App() {
   const [grid, setGrid] = useState(startGrid);
   const [start, setStart] = useState(false);
   const [end, setEnd] = useState(false);
-  const [arrow, setArrow] = useState('right');//the snake set horizontally at the left, starting from 'right'
-  const [move, setMove] = useState('right');
+  const arrowRef = useRef('right');  //the snake set horizontally at the left, starting from 'right'
+  const [prevMove, setPrevMove] = useState('right');
 
   const drawSnake = (snake: Coordinates[]) => {
     setGrid(prev => {
       const newGrid = prev.map(i => [...i]);
-      for (let x = 0; x < startSnake.length; x++) { newGrid[snake[x][0]][snake[x][1]] = 1; }
+      for (let x = 0; x < startSnake.length; x++) { newGrid[snake[x][0]][snake[x][1]] = 1; }  //use length here later
       return newGrid;
     });
   }
   const arrowHandler = (e: KeyboardEvent) => {
-    if (e.key === 'ArrowUp') { setArrow('up'); }
-    if (e.key === 'ArrowDown') { setArrow('down'); }
-    if (e.key === 'ArrowLeft') { setArrow('left'); }
-    if (e.key === 'ArrowRight') { setArrow('right'); }
+    const head = snake[snake.length - 1];
+    if (
+      e.key === 'ArrowRight' && head[1] + 1 === cols ||
+      e.key === 'ArrowLeft' && head[1] - 1 === -1 ||
+      e.key === 'ArrowDown' && head[0] + 1 === rows ||
+      e.key === 'ArrowUp' && head[0] - 1 === -1
+    ) {
+      reset();
+    }
+    else {
+      if (e.key === 'ArrowRight' && grid[head[0]][head[1] + 1] !== 1) { arrowRef.current = 'right'; }
+      if (e.key === 'ArrowLeft' && grid[head[0]][head[1] - 1] !== 1) { arrowRef.current = 'left'; }
+      if (e.key === 'ArrowDown' && grid[head[0] + 1][head[1]] !== 1) { arrowRef.current = 'down'; }
+      if (e.key === 'ArrowUp' && grid[head[0] - 1][head[1]] !== 1) { arrowRef.current = 'up'; }
+      //the 2nd condition checks if it is not going to turn against itself
+    }
   }
-  const redrawSnake = (snake: Coordinates[], startGrid: number[][], r: number, c: number) => {
+  const redrawSnake = (startGrid: number[][], r: number, c: number) => {
+    setPrevMove(arrowRef.current);
     setSnake(prev => {
       const newSnake: Coordinates[] = [...prev];
       newSnake.shift();
       const head: Coordinates = prev[prev.length - 1];
       newSnake.push([head[0] + r, head[1] + c]); //r -row move, c -column move
+      setGrid(startGrid);
+      drawSnake(newSnake);
       return newSnake
     })
-    setGrid(startGrid);
-    drawSnake(snake);
   }
   const reset = () => {
     setStart(false); setEnd(true);
@@ -50,56 +63,38 @@ function App() {
   const onStartClick = () => {
     setStart(!start); setEnd(false);
     drawSnake(snake);
-    setArrow('right'); setMove('right');
+    arrowRef.current = 'right';
   }
 
   useEffect(() => {
     window.addEventListener('keydown', arrowHandler);
     return () => window.removeEventListener('keydown', arrowHandler);
-  }, [arrow, snake, grid]);
-
-  useEffect(() => {
-    const head = snake[snake.length - 1];
-    if (arrow === 'right' && head[1] < cols && grid[head[0]][head[1] + 1] !== 1) { setMove('right'); }
-    if (arrow === 'left' && head[1] >= 0 && grid[head[0]][head[1] - 1] !== 1) { setMove('left'); }
-    if (arrow === 'down' && head[0] < rows && grid[head[0] + 1][head[1]] !== 1) { setMove('down'); }
-    if (arrow === 'up' && head[0] >= 0 && grid[head[0] - 1][head[1]] !== 1) { setMove('up'); }
-    //the 2nd condition checks if it is not going to turn against itself
-  }, [arrow]);
-
-  // const validBoundaries = (head: Coordinates) => {
-  //   if (head[0] === -1 || head[1] === -1 || head[0] === rows || head[1] === cols) return false;
-  //   else return true;
-  // }
-
+  }, [snake, grid]);
   useEffect(() => {
     if (start === true) {
       const moveSnake = setInterval(() => {
         const head = snake[snake.length - 1];
-        if (move === 'right' && head[1] <= cols) {
-          if (head[1] < cols) redrawSnake(snake, startGrid, 0, 1);
-          else reset();
+        if (arrowRef.current === 'right' && head[1] < cols) {
+          if (prevMove === 'right' && head[1] === cols - 1) reset();
+          else redrawSnake(startGrid, 0, 1);
         }
-        if (move === 'left' && head[1] >= -1) {
-          if (head[1] >= 0) redrawSnake(snake, startGrid, 0, -1);
-          else reset();
+        if (arrowRef.current === 'left' && head[1] >= -1) {
+          if (prevMove === 'left' && head[1] === 0) reset();
+          else redrawSnake(startGrid, 0, -1);
         }
-        if (move === 'down' && head[0] <= rows) {
-          if (head[0] < rows) redrawSnake(snake, startGrid, 1, 0);
-          else reset();
+        if (arrowRef.current === 'down' && head[0] <= rows) {
+          if (prevMove === 'down' && head[0] === rows - 1) reset();
+          else redrawSnake(startGrid, 1, 0);
         }
-        if (move === 'up' && head[0] >= -1) {
-          if (head[0] >= 0) redrawSnake(snake, startGrid, -1, 0);
-          else reset();
+        if (arrowRef.current === 'up' && head[0] >= -1) {
+          if (prevMove === 'up' && head[0] === 0) reset();
+          else redrawSnake(startGrid, -1, 0);
         }
-      }, 100);
+      }, 200);
       return () => clearInterval(moveSnake);
     }
   }, [start, grid]);
 
-  useEffect(() => {
-    console.table(snake[snake.length - 1]);
-  }, [snake]);
   return (
     <>
       <Stack mb={2} border='2px solid blue' width='604px' height='404px' justifyContent='center'>
