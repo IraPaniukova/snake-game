@@ -167,7 +167,7 @@ function App() {
 
   return (
     <Box position='relative'>
-      <Typography variant='h3' color='limegreen'>SnaKe GamE</Typography>
+      {!(isMobile && start) && <Typography variant='h3' color='limegreen'>SnaKe GamE</Typography>}
       {isMobile ? <Typography variant='h6' color='limegreen'>SCORE: {score}</Typography> :
         <Stack position='absolute' top={0} right={0} p={1} sx={{ backgroundColor: 'limegreen', borderRadius: 5 }}>
           <Typography variant='h6' color='white'>SCORE</Typography>
