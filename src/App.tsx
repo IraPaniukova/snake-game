@@ -1,12 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import { Box, Button, Stack, Typography } from '@mui/material';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 
 function App() {
   type Coordinates = [number, number];
 
-  const rows = 20; const cols = 30;
+  const isMobile = window.innerWidth <= 600;
+  const rows = isMobile ? 30 : 20;
+  const cols = isMobile ? 20 : 30;
+  const cellSize = 20;
+  const width = `${cols * cellSize}px`;
+  const height = `${rows * cellSize}px`;
+
   const startGrid = Array.from({ length: rows }, () => Array(cols).fill(0));
   const startSnake: Coordinates[] = [[3, 1], [3, 2], [3, 3]];
 
@@ -45,6 +55,7 @@ function App() {
       //the 2nd condition checks if it is not going to turn against itself
     }
   }
+
   const redrawSnake = (r: number, c: number) => {
     setPrevMove(arrowRef.current);
 
@@ -91,6 +102,24 @@ function App() {
     window.addEventListener('keydown', arrowHandler);
     return () => window.removeEventListener('keydown', arrowHandler);
   }, [snake, grid]);
+  //for mobile phones: 
+  const mobileArrowHandler = (direction: string) => {
+    const head = snake[snake.length - 1];
+    if (
+      direction === 'right' && head[1] + 1 === cols ||
+      direction === 'left' && head[1] - 1 === -1 ||
+      direction === 'down' && head[0] + 1 === rows ||
+      direction === 'up' && head[0] - 1 === -1
+    ) {
+      fail();
+    }
+    else {
+      if (direction === 'right' && grid[head[0]][head[1] + 1] !== 1) { arrowRef.current = 'right'; }
+      if (direction === 'left' && grid[head[0]][head[1] - 1] !== 1) { arrowRef.current = 'left'; }
+      if (direction === 'down' && grid[head[0] + 1][head[1]] !== 1) { arrowRef.current = 'down'; }
+      if (direction === 'up' && grid[head[0] - 1][head[1]] !== 1) { arrowRef.current = 'up'; }
+    }
+  }
 
   useEffect(() => {
     if (start) {
@@ -139,18 +168,24 @@ function App() {
   return (
     <Box position='relative'>
       <Typography variant='h3' color='limegreen'>SnaKe GamE</Typography>
-      <Stack position='absolute' top={0} right={0} p={1} sx={{ backgroundColor: 'limegreen', borderRadius: 5 }}>
-        <Typography variant='h6' color='white'>SCORE</Typography>
-        <Typography variant='h6' color='white'>{score}</Typography>
-      </Stack>
-      <Stack width='600px' alignItems='center'><Box className="wavy-line" /></Stack >
+      {isMobile ? <Typography variant='h6' color='limegreen'>SCORE: {score}</Typography> :
+        <Stack position='absolute' top={0} right={0} p={1} sx={{ backgroundColor: 'limegreen', borderRadius: 5 }}>
+          <Typography variant='h6' color='white'>SCORE</Typography>
+          <Typography variant='h6' color='white'>{score}</Typography>
+        </Stack>}
+      <Stack width={width} alignItems='center'><Box className="wavy-line" /></Stack >
+      {isMobile &&
+        <Stack direction='row' pt={3} justifyContent='center' spacing={2}>
+          <Button variant='contained' onClick={onStartClick}>{start ? 'Restart' : 'Start'}</Button>
+          <Button disabled={!start} variant='contained' onClick={finish}>Finish</Button>
+        </Stack >}
 
-      <Stack marginY={2} border='2px solid blue' width='600px' height='400px' justifyContent='center'>
+      <Stack marginY={2} border='2px solid blue' width={width} height={height} justifyContent='center'>
         {start && <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: `repeat(${cols}, 20px)`,
-            gridTemplateRows: `repeat(${rows}, 20px)`,
+            gridTemplateColumns: `repeat(${cols}, ${cellSize}px)`,
+            gridTemplateRows: `repeat(${rows}, ${cellSize}px)`,
           }}
         >
           {grid.flat().map((cell, index) => (
@@ -167,11 +202,25 @@ function App() {
         </Box>}
         {end && <Typography variant='h2' color='red'>TRY AGAIN</Typography>}
       </Stack >
-      <Stack direction='row' justifyContent='center' spacing={2}>
-        <Button variant='contained' onClick={onStartClick}>{start ? 'Restart' : 'Start'}</Button>
-        <Button disabled={!start} variant='contained' onClick={finish}>Finish</Button>
-      </Stack >
+      {isMobile && <>
+        <Button onClick={() => mobileArrowHandler('up')}
+          sx={{ width: 130, mt: 1 }} variant='outlined'><ArrowUpwardIcon /></Button>
+        <Stack direction='row' justifyContent='space-between'>
+          <Button onClick={() => mobileArrowHandler('left')}
+            sx={{ width: 130 }} variant='outlined'><ArrowBackIcon /></Button>
+          <Button onClick={() => mobileArrowHandler('right')}
+            sx={{ width: 130 }} variant='outlined'><ArrowForwardIcon /></Button>
+        </Stack>
+        <Button onClick={() => mobileArrowHandler('down')}
+          sx={{ width: 130, mb: 5 }} variant='outlined'><ArrowDownwardIcon /></Button>
+      </>}
+      {!isMobile &&
+        <Stack direction='row' justifyContent='center' spacing={2}>
+          <Button variant='contained' onClick={onStartClick}>{start ? 'Restart' : 'Start'}</Button>
+          <Button disabled={!start} variant='contained' onClick={finish}>Finish</Button>
+        </Stack >}
     </Box>
+
   )
 }
 
