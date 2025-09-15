@@ -11,7 +11,7 @@ function App() {
   type Coordinates = [number, number];
 
   const isMobile = window.innerWidth <= 600;
-  const rows = isMobile ? 30 : 20;
+  const rows = isMobile ? 20 : 20;
   const cols = isMobile ? 20 : 30;
   const cellSize = 20;
   const width = `${cols * cellSize}px`;
@@ -167,7 +167,7 @@ function App() {
 
   return (
     <Box position='relative'>
-      {!(isMobile && start) && <Typography variant='h3' color='limegreen'>SnaKe GamE</Typography>}
+      <Typography variant='h3' color='limegreen'>SnaKe GamE</Typography>
       {isMobile ? <Typography variant='h6' color='limegreen'>SCORE: {score}</Typography> :
         <Stack position='absolute' top={0} right={0} p={1} sx={{ backgroundColor: 'limegreen', borderRadius: 5 }}>
           <Typography variant='h6' color='white'>SCORE</Typography>
