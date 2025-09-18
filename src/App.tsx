@@ -91,6 +91,7 @@ function App() {
   }
 
   const onStartClick = () => {
+    if (isMobile) window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     setStart(true); setEnd(false);
     reset();//the line alllows to use it as a restart too
     drawSnake(startSnake);
@@ -127,18 +128,22 @@ function App() {
         const head = snake[snake.length - 1];
         if (arrowRef.current === 'right' && head[1] < cols) {
           if (prevMove === 'right' && head[1] === cols - 1) fail();
+          if (prevMove === 'right' && grid[head[0]][head[1] + 1] === 1) fail();
           else redrawSnake(0, 1);
         }
         if (arrowRef.current === 'left' && head[1] >= -1) {
           if (prevMove === 'left' && head[1] === 0) fail();
+          if (prevMove === 'left' && grid[head[0]][head[1] - 1] === 1) fail();
           else redrawSnake(0, -1);
         }
         if (arrowRef.current === 'down' && head[0] <= rows) {
           if (prevMove === 'down' && head[0] === rows - 1) fail();
+          if (prevMove === 'down' && grid[head[0] + 1][head[1]] === 1) fail();
           else redrawSnake(1, 0);
         }
         if (arrowRef.current === 'up' && head[0] >= -1) {
           if (prevMove === 'up' && head[0] === 0) fail();
+          if (prevMove === 'up' && grid[head[0] - 1][head[1]] === 1) fail();
           else redrawSnake(-1, 0);
         }
       }, 200);
