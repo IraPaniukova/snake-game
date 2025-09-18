@@ -11,29 +11,29 @@ function App() {
   type Coordinates = [number, number];
 
   const isMobile = window.innerWidth <= 600;
-  const rows = isMobile ? 20 : 20;
+  const rows = isMobile ? 25 : 20;
   const cols = isMobile ? 20 : 30;
-  const cellSize = 20;
+  const cellSize = isMobile ? 16 : 20;
   const width = `${cols * cellSize}px`;
   const height = `${rows * cellSize}px`;
 
   const startGrid = Array.from({ length: rows }, () => Array(cols).fill(0));
   const startSnake: Coordinates[] = [[3, 1], [3, 2], [3, 3]];
 
-  // const [length, setLength] = useState(startSnake.length);
   const [snake, setSnake] = useState(startSnake);
   const [grid, setGrid] = useState(startGrid);
   const [start, setStart] = useState(false);
   const [end, setEnd] = useState(false);
-  const arrowRef = useRef('right');  //the snake set horizontally at the left, starting from 'right'
+  const arrowRef = useRef('right');
   const [prevMove, setPrevMove] = useState('right');
   const [prize, setPrize] = useState(false);
   const [score, setScore] = useState(0);
+  const [increase, setIncrease] = useState(false);
 
   const drawSnake = (snake: Coordinates[]) => {
     setGrid(prev => {
       const newGrid = prev.map(i => [...i]);
-      for (let x = 0; x < startSnake.length; x++) { newGrid[snake[x][0]][snake[x][1]] = 1; }  //use length here later
+      for (let x = 0; x < startSnake.length; x++) { newGrid[snake[x][0]][snake[x][1]] = 1; }
       return newGrid;
     });
   }
@@ -58,20 +58,20 @@ function App() {
 
   const redrawSnake = (r: number, c: number) => {
     setPrevMove(arrowRef.current);
-
     setSnake(prev => {
       const newSnake: Coordinates[] = [...prev];
       const head: Coordinates = prev[prev.length - 1];
       setGrid(prevG => {
         const newGrid = prevG.map(i => [...i]);
         if (newGrid[head[0] + r][head[1] + c] === 2) {
-          setPrize(false); setScore(score + 1);
+          setPrize(false); setScore(score + 1); setIncrease(true);
         }
-        newGrid[prev[0][0]][prev[0][1]] = 0;
+        else newGrid[prev[0][0]][prev[0][1]] = 0;
         newGrid[head[0] + r][head[1] + c] = 1;
         return newGrid;
       });
-      newSnake.shift();
+      if (!increase) newSnake.shift();
+      setIncrease(false);
       newSnake.push([head[0] + r, head[1] + c]); //r -row move, c -column move
       return newSnake
     })
