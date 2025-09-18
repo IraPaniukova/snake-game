@@ -76,8 +76,15 @@ function App() {
       return newSnake
     })
   }
+  const setMax = () => {
+    const value = Number(localStorage.getItem('max'));
+    if (value) { localStorage.setItem('max', score > value ? score.toString() : value.toString()); }
+    else { localStorage.setItem('max', score.toString()); }
+    console.log(localStorage.getItem('max'));
+  }
 
   const reset = () => {
+    setMax();
     setGrid(startGrid); setSnake(startSnake);
     setPrize(false);
   }
@@ -170,14 +177,26 @@ function App() {
     }
   }, [start, prize]);
 
+  const max = localStorage.getItem('max');
+
   return (
     <Box position='relative'>
       <Typography variant='h3' color='limegreen'>SnaKe GamE</Typography>
-      {isMobile ? <Typography variant='h6' color='limegreen'>SCORE: {score}</Typography> :
-        <Stack position='absolute' top={0} right={0} p={1} sx={{ backgroundColor: 'limegreen', borderRadius: 5 }}>
-          <Typography variant='h6' color='white'>SCORE</Typography>
-          <Typography variant='h6' color='white'>{score}</Typography>
-        </Stack>}
+      {isMobile ? <Typography variant='h6' color='limegreen'>SCORE: {score}{(max !== null && Number(max) !== 0) && `  / MAX:  ${max} `}</Typography> :
+        <>
+          <Stack position='absolute' top={0} left={0} p={1} width={84} sx={{ backgroundColor: '#E6E6E6', borderRadius: 5 }}>
+            <Typography variant='h6' color='limegreen'>MAX</Typography>
+            <Typography variant='h6' color='limegreen'>
+              {(max !== null && Number(max) !== 0) && max}
+            </Typography>
+          </Stack>
+          <Stack position='absolute' top={0} right={0} p={1} width={84} sx={{ backgroundColor: '#E6E6E6', borderRadius: 5 }}>
+            <Typography variant='h6' color='limegreen'>SCORE</Typography>
+            <Typography variant='h6' color='limegreen'>
+              {score}
+            </Typography>
+          </Stack>
+        </>}
       <Stack width={width} alignItems='center'><Box className="wavy-line" /></Stack >
       {isMobile &&
         <Stack direction='row' pt={3} justifyContent='center' spacing={2}>
