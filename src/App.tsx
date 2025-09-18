@@ -66,7 +66,7 @@ function App() {
         if (newGrid[head[0] + r][head[1] + c] === 2) {
           setPrize(false); setScore(score + 1); setIncrease(true);
         }
-        else newGrid[prev[0][0]][prev[0][1]] = 0;
+        newGrid[prev[0][0]][prev[0][1]] = 0;
         newGrid[head[0] + r][head[1] + c] = 1;
         return newGrid;
       });
@@ -180,7 +180,7 @@ function App() {
           <Button disabled={!start} variant='contained' onClick={finish}>Finish</Button>
         </Stack >}
 
-      <Stack marginY={2} border='2px solid blue' width={width} height={height} justifyContent='center'>
+      <Stack marginY={2} border='2px solid' borderColor='primary.main' width={width} height={height} justifyContent='center'>
         {start && <Box
           sx={{
             display: 'grid',
@@ -195,7 +195,7 @@ function App() {
                 width: 20,
                 height: 20,
                 // border: '1px solid gray',
-                backgroundColor: cell === 2 ? 'limegreen' : cell === 1 ? 'blue' : 'white'
+                backgroundColor: cell === 2 ? 'limegreen' : cell === 1 ? 'primary.main' : 'white'
               }}
             />
           ))}
