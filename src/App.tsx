@@ -180,7 +180,7 @@ function App() {
           <Button disabled={!start} variant='contained' onClick={finish}>Finish</Button>
         </Stack >}
 
-      <Stack marginY={2} border='2px solid' borderColor='primary.main' width={width} height={height} justifyContent='center'>
+      <Stack marginY={2} border='3px solid' borderColor='primary.main' width={width} height={height} justifyContent='center'>
         {start && <Box
           sx={{
             display: 'grid',
@@ -192,8 +192,8 @@ function App() {
             <Box
               key={index}
               sx={{
-                width: 20,
-                height: 20,
+                width: cellSize,
+                height: cellSize,
                 // border: '1px solid gray',
                 backgroundColor: cell === 2 ? 'limegreen' : cell === 1 ? 'primary.main' : 'white'
               }}
